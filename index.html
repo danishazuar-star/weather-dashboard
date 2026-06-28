@@ -108,18 +108,27 @@
         let globalWeatherData = null;
 
         // Fungsi utama untuk mengambil data dari API Weatherstack
+        // Fungsi utama untuk mengambil data menggunakan proxy bagi mengelakkan Mixed Content error
         function fetchWeather(city) {
-            // Menggunakan http kerana pelan percuma Weatherstack menyekat https
-            const url = `http://api.weatherstack.com/current?access_key=${apiKey}&query=${encodeURIComponent(city)}`;
+            const targetUrl = `http://api.weatherstack.com/current?access_key=${apiKey}&query=${encodeURIComponent(city)}`;
             
-            fetch(url)
-                .then(response => response.json())
+            // Menggunakan proxy allorigins untuk membenarkan permintaan http di dalam laman https (GitHub Pages)
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+            
+            fetch(proxyUrl)
+                .then(response => {
+                    if (response.ok) return response.json();
+                    throw new Error('Ralat rangkaian.');
+                })
                 .then(data => {
-                    if (data.success === false) {
+                    // Allorigins membungkus data sebenar di dalam objek .contents sebagai String JSON
+                    const weatherData = JSON.parse(data.contents);
+                    
+                    if (weatherData.success === false) {
                         alert('Ralat API: Sila pastikan API Key anda betul.');
                         return;
                     }
-                    globalWeatherData = data;
+                    globalWeatherData = weatherData;
                     updateDashboard();
                 })
                 .catch(err => {
