@@ -4,55 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Pro - Dashboard</title>
-    <!-- Menggunakan Tailwind CSS untuk penggayaan premium & pantas -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            background-color: #12131C;
-        }
-        .bg-dark-card {
-            background-color: #1A1B26;
-        }
+        body { background-color: #12131C; }
+        .bg-dark-card { background-color: #1A1B26; }
     </style>
 </head>
 <body class="text-white font-sans min-h-screen flex justify-center items-start p-4 sm:p-8">
 
-    <!-- Container Utama Dashboard (Mirip fail image_fa951e.png) -->
     <div class="w-full max-w-md bg-[#161722] rounded-3xl p-6 shadow-2xl border border-gray-800">
         
-        <!-- Header: Nama Aplikasi -->
+        <!-- Header -->
         <div class="flex items-center space-x-2 mb-6">
             <span class="text-2xl">☀️</span>
             <h1 class="text-xl font-bold text-pink-500 tracking-wide">Weather Pro</h1>
         </div>
 
-        <!-- Bahagian Carian & Unit -->
+        <!-- Carian -->
         <div class="flex items-center space-x-3 mb-4">
             <div class="relative flex-1">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
                 <input id="city-input" type="text" placeholder="Search city..." 
                     class="w-full bg-[#1A1B26] pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm text-gray-200">
             </div>
-            <!-- Butang Tukar Unit C/F -->
             <div class="flex bg-[#1A1B26] p-1 rounded-xl text-xs font-semibold">
                 <button id="btn-celsius" class="bg-gradient-to-r from-pink-500 to-purple-500 px-3 py-2 rounded-lg font-bold">°C</button>
                 <button id="btn-fahrenheit" class="px-3 py-2 text-gray-400 rounded-lg">°F</button>
             </div>
         </div>
 
-        <!-- Butang Refresh Kecil -->
         <div class="flex justify-center mb-6">
             <button id="btn-refresh" class="bg-[#1A1B26] p-2 rounded-xl text-gray-400 hover:text-white transition">
                 <i class="fa-solid fa-rotate-right text-xs"></i>
             </button>
         </div>
 
-        <!-- Kad Utama: Maklumat Cuaca Utama -->
+        <!-- Kad Utama -->
         <div class="bg-dark-card rounded-2xl p-6 text-center mb-6 border border-gray-800/50">
             <div id="weather-icon-container" class="flex justify-center mb-2">
-                <!-- Ikon akan dimuatkan di sini -->
-                <div class="w-16 h-16 bg-gray-700 animate-pulse rounded-full"></div>
+                <div class="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center text-xs">☁️</div>
             </div>
             
             <div class="text-5xl font-bold tracking-tight my-2 flex justify-center items-start justify-center">
@@ -61,35 +52,31 @@
             
             <p class="text-sm text-gray-400 mt-1">in <span id="location-name" class="font-semibold text-white">--</span></p>
             
-            <h2 id="weather-desc" class="text-lg font-bold text-pink-400 mt-4 capitalize">--</h2>
+            <h2 id="weather-desc" class="text-lg font-bold text-pink-400 mt-4 capitalize">Memuatkan data...</h2>
             <p id="feels-like" class="text-xs text-gray-400 mt-1">Feels like --°C</p>
             <p id="last-updated" class="text-[10px] text-gray-500 mt-4">Last updated: --:--</p>
         </div>
 
-        <!-- Grid Kad Bawah: Perincian Parameter -->
+        <!-- Grid Kad Bawah -->
         <div class="grid grid-cols-2 gap-4">
-            <!-- Kad Kelembapan -->
             <div class="bg-dark-card rounded-2xl p-4 flex flex-col items-center justify-center text-center border border-gray-800/50">
                 <i class="fa-solid fa-droplet text-blue-400 text-xl mb-2"></i>
                 <span id="humidity-val" class="text-lg font-bold">--%</span>
                 <span class="text-[10px] text-gray-500 font-semibold tracking-wider uppercase mt-1">Humidity</span>
             </div>
 
-            <!-- Kad Kelajuan Angin -->
             <div class="bg-dark-card rounded-2xl p-4 flex flex-col items-center justify-center text-center border border-gray-800/50">
                 <i class="fa-solid fa-wind text-gray-300 text-xl mb-2"></i>
                 <span id="wind-val" class="text-lg font-bold">-- km/h</span>
                 <span class="text-[10px] text-gray-500 font-semibold tracking-wider uppercase mt-1">Wind Speed</span>
             </div>
 
-            <!-- Kad Arah Angin -->
             <div class="bg-dark-card rounded-2xl p-4 flex flex-col items-center justify-center text-center border border-gray-800/50">
                 <i class="fa-solid fa-compass text-red-400 text-xl mb-2"></i>
                 <span id="wind-dir-val" class="text-lg font-bold">--</span>
                 <span class="text-[10px] text-gray-500 font-semibold tracking-wider uppercase mt-1">Wind Direction</span>
             </div>
 
-            <!-- Kad Indeks UV -->
             <div class="bg-dark-card rounded-2xl p-4 flex flex-col items-center justify-center text-center border border-gray-800/50">
                 <i class="fa-solid fa-sun text-yellow-400 text-xl mb-2"></i>
                 <span id="uv-val" class="text-lg font-bold">--</span>
@@ -99,52 +86,50 @@
 
     </div>
 
-    <!-- Logik JavaScript -->
     <script>
-        // Sila masukkan API Access Key Weatherstack anda di sini
+        // Masukkan API Key Weatherstack anda yang betul di bawah
         const apiKey = 'b179fdace5d0c07db5791f82a38823c4'; 
         let currentCity = 'Kuala Lumpur';
-        let currentUnit = 'C'; // 'C' untuk Celsius, 'F' untuk Fahrenheit
+        let currentUnit = 'C'; 
         let globalWeatherData = null;
 
-        // Fungsi utama untuk mengambil data dari API Weatherstack
-        // Fungsi utama untuk mengambil data menggunakan proxy bagi mengelakkan Mixed Content error
         function fetchWeather(city) {
-            const targetUrl = `http://api.weatherstack.com/current?access_key=${apiKey}&query=${encodeURIComponent(city)}`;
+            document.getElementById('weather-desc').innerText = "Memuatkan data...";
             
-            // Menggunakan proxy allorigins untuk membenarkan permintaan http di dalam laman https (GitHub Pages)
+            const targetUrl = `http://api.weatherstack.com/current?access_key=${apiKey}&query=${encodeURIComponent(city)}`;
             const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
             
             fetch(proxyUrl)
                 .then(response => {
                     if (response.ok) return response.json();
-                    throw new Error('Ralat rangkaian.');
+                    throw new Error('Ralat sambungan rangkaian.');
                 })
                 .then(data => {
-                    // Allorigins membungkus data sebenar di dalam objek .contents sebagai String JSON
                     const weatherData = JSON.parse(data.contents);
                     
+                    // Semak jika Weatherstack memulangkan objek ralat
                     if (weatherData.success === false) {
-                        alert('Ralat API: Sila pastikan API Key anda betul.');
+                        document.getElementById('weather-desc').innerText = "Ralat API Key!";
+                        alert(`Ralat API (Kod ${weatherData.error.code}): ${weatherData.error.info}`);
                         return;
                     }
+                    
                     globalWeatherData = weatherData;
                     updateDashboard();
                 })
                 .catch(err => {
                     console.error(err);
-                    alert('Gagal menyambung ke API. Sila periksa sambungan internet atau tetapan HTTP.');
+                    document.getElementById('weather-desc').innerText = "Gagal memuatkan data";
+                    alert('Gagal menyambung ke API. Sila semak API Key atau internet anda.');
                 });
         }
 
-        // Fungsi kemas kini paparan UI
         function updateDashboard() {
             if (!globalWeatherData) return;
             
             const current = globalWeatherData.current;
             const location = globalWeatherData.location;
 
-            // Pengiraan dan pertukaran unit suhu
             let temp = current.temperature;
             let feelsLike = current.feels_like;
             
@@ -158,29 +143,26 @@
                 document.getElementById('btn-fahrenheit').className = "px-3 py-2 text-gray-400 rounded-lg";
             }
 
-            // Kemas kini data utama
             document.getElementById('location-name').innerText = location.name;
             document.getElementById('main-temp').innerText = temp;
             document.getElementById('weather-desc').innerText = current.weather_descriptions[0];
             document.getElementById('feels-like').innerText = `Feels like ${feelsLike}°${currentUnit}`;
             
-            // Format masa kemas kini terkini
             const timePart = location.localtime.split(' ')[1] || '--:--';
             document.getElementById('last-updated').innerText = `Last updated: ${timePart}`;
 
-            // Kemas kini ikon cuaca
-            document.getElementById('weather-icon-container').innerHTML = `
-                <img src="${current.weather_icons[0]}" alt="weather icon" class="w-16 h-16 drop-shadow-[0_4px_10px_rgba(255,255,255,0.2)]">
-            `;
+            if (current.weather_icons && current.weather_icons[0]) {
+                document.getElementById('weather-icon-container').innerHTML = `
+                    <img src="${current.weather_icons[0]}" alt="weather icon" class="w-16 h-16 drop-shadow-[0_4px_10px_rgba(255,255,255,0.2)]">
+                `;
+            }
 
-            // Kemas kini grid parameter bawah
             document.getElementById('humidity-val').innerText = `${current.humidity}%`;
             document.getElementById('wind-val').innerText = `${current.wind_speed} km/h`;
             document.getElementById('wind-dir-val').innerText = current.wind_dir;
             document.getElementById('uv-val').innerText = current.uv_index;
         }
 
-        // Event Listener untuk bar carian (Tekan Enter untuk cari)
         document.getElementById('city-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && this.value.trim() !== '') {
                 currentCity = this.value.trim();
@@ -188,29 +170,22 @@
             }
         });
 
-        // Event Listener untuk unit Celsius
         document.getElementById('btn-celsius').addEventListener('click', () => {
-            if (currentUnit !== 'C') {
-                currentUnit = 'C';
-                updateDashboard();
-            }
+            if (currentUnit !== 'C') { currentUnit = 'C'; updateDashboard(); }
         });
 
-        // Event Listener untuk unit Fahrenheit
         document.getElementById('btn-fahrenheit').addEventListener('click', () => {
-            if (currentUnit !== 'F') {
-                currentUnit = 'F';
-                updateDashboard();
-            }
+            if (currentUnit !== 'F') { currentUnit = 'F'; updateDashboard(); }
         });
 
-        // Event Listener untuk butang refresh
         document.getElementById('btn-refresh').addEventListener('click', () => {
             fetchWeather(currentCity);
         });
 
-        // Jalankan carian pertama semasa aplikasi dibuka
-        fetchWeather(currentCity);
+        // AUTO-RUN carian pertama sebaik sahaja halaman dibuka
+        window.onload = function() {
+            fetchWeather(currentCity);
+        };
     </script>
 </body>
 </html>
